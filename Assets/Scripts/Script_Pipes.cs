@@ -34,73 +34,21 @@ public class Script_Pipes : MonoBehaviour
         switch (nextDirection)
         {
             case 0:
-            /*
-                if (previousDirection == 0 || previousDirection == 1) {
-                    nextDirection = Random.Range(2,5);
-                    CreatePipes();
-                    break;
-                }
-            */
                 GoPositiveX();
                 break;
             case 1:
-            /*
-                if (previousDirection == 0 || previousDirection == 1) {
-                    nextDirection = Random.Range(2,5);
-                    CreatePipes();
-                    break;
-                }
-            */
                 GoNegativeX();
                 break;
             case 2:
-            /*
-                if (previousDirection == 2 || previousDirection == 3) {
-                    int random = Random.Range(0,1);
-                    if (random == 0) {
-                        nextDirection = Random.Range(0,1);
-                    } else {
-                        nextDirection = Random.Range(4,5);
-                    }
-                    CreatePipes();
-                    break;
-                }
-            */
                 GoPositiveY();
                 break;
             case 3:
-            /*
-                if (previousDirection == 2 || previousDirection == 3) {
-                    int random = Random.Range(0,1);
-                    if (random == 0) {
-                        nextDirection = Random.Range(0,1);
-                    } else {
-                        nextDirection = Random.Range(4,5);
-                    }
-                    CreatePipes();
-                    break;
-                }
-            */
                 GoNegativeY();
                 break;
             case 4:
-            /*
-                if (previousDirection == 4 || previousDirection == 5) {
-                    nextDirection = Random.Range(0,3);
-                    CreatePipes();
-                    break;
-                }
-            */
                 GoPositiveZ();
                 break;
             case 5:
-            /*
-                if (previousDirection == 4 || previousDirection == 5) {
-                    nextDirection = Random.Range(0,3);
-                    CreatePipes();
-                    break;
-                }
-            */
                 GoNegativeZ();
                 break;
         }
@@ -109,59 +57,53 @@ public class Script_Pipes : MonoBehaviour
     void GoPositiveX ()
     {
         // nextDirection = 0
-        Instantiate(cylinder, currentPosition, Quaternion.Euler(new Vector3(90, 0, 0)), this.transform);
+        Instantiate(cylinder, new Vector3(currentPosition.x + 1, currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 270)), this.transform);
         nextDirection = Random.Range(2,6);
-        Debug.Log(nextDirection);
     }
 
     void GoNegativeX ()
     {
         // nextDirection = 1
-        Instantiate(cylinder, currentPosition, Quaternion.Euler(new Vector3(270, 0, 0)), this.transform);
+        Instantiate(cylinder, new Vector3(currentPosition.x - 1, currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 90)), this.transform);
         nextDirection = Random.Range(2,6);
-        Debug.Log(nextDirection);
     }
 
     void GoPositiveY ()
     {
         // nextDirection = 2
-        Instantiate(cylinder, currentPosition, Quaternion.Euler(new Vector3(0, 90, 0)), this.transform);
+        Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y + 1, currentPosition.z), Quaternion.identity, this.transform);
         int randomNumber = Random.Range(0,2);
         if (randomNumber == 0) {
             nextDirection = Random.Range(0,2);
         } else {
             nextDirection = Random.Range(4,6);
         }
-        Debug.Log(nextDirection);
     }
 
     void GoNegativeY ()
     {
         // nextDirection = 3
-        Instantiate(cylinder, currentPosition, Quaternion.Euler(new Vector3(0, 270, 0)), this.transform);
+        Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y - 1, currentPosition.z), Quaternion.identity, this.transform);
         int randomNumber = Random.Range(0,2);
         if (randomNumber == 0) {
             nextDirection = Random.Range(0,2);
         } else {
             nextDirection = Random.Range(4,6);
         }
-        Debug.Log(nextDirection);
     }
 
     void GoPositiveZ ()
     {
         // nextDirection = 4
-        Instantiate(cylinder, currentPosition, Quaternion.Euler(new Vector3(0, 0, 90)), this.transform);
+        Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + 1), Quaternion.Euler(new Vector3(270, 0, 0)), this.transform);
         nextDirection = Random.Range(0,4);
-        Debug.Log(nextDirection);
     }
 
     void GoNegativeZ ()
     {
         // nextDirection = 5
-        Instantiate(cylinder, currentPosition, Quaternion.Euler(new Vector3(0, 0, 270)), this.transform);
+        Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z - 1), Quaternion.Euler(new Vector3(90, 0, 0)), this.transform);
         nextDirection = Random.Range(0,4);
-        Debug.Log(nextDirection);
     }
 
     void StartNew ()

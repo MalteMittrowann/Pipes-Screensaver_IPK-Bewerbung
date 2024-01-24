@@ -8,8 +8,12 @@ public class Script_Pipes : MonoBehaviour
     public GameObject sphere;
     public GameObject cylinder;
 
-    public int minimalBoundary = -20;
-    public int maximumBoundary = 20;
+    public int minimalBoundaryX = -20;
+    public int maximumBoundaryX = 20;
+    public int minimalBoundaryY = -10;
+    public int maximumBoundaryY = 10;
+    public int minimalBoundaryZ = 0;
+    public int maximumBoundaryZ = 20;
 
     public float secondsToSpawnNewPipe = 1.0f;
     public float secondsToRenewTheScene = 30.0f;
@@ -22,7 +26,7 @@ public class Script_Pipes : MonoBehaviour
     void Start()
     {
         nextDirection = Random.Range(0,6); // Random Number from 0 (incl.) to 6 (excl.): for the 6 possible directions
-        Vector3 startSpawnPosition = new Vector3 (Random.Range(-10, 11), Random.Range(-5, 6), Random.Range(0, 21));
+        Vector3 startSpawnPosition = new Vector3 (Random.Range(-minimalBoundaryX, maximumBoundaryX), Random.Range(minimalBoundaryY, maximumBoundaryY), Random.Range(minimalBoundaryZ, maximumBoundaryZ)); // Create random startPosition for the first sphere
         currentPosition = startSpawnPosition;
         GameObject startSphere = Instantiate(sphere, startSpawnPosition, Quaternion.identity, this.transform);
         InvokeRepeating("CreatePipes", 0.5f, secondsToSpawnNewPipe);
@@ -34,22 +38,64 @@ public class Script_Pipes : MonoBehaviour
         switch (nextDirection)
         {
             case 0:
-                GoPositiveX(Random.Range(1, maximumBoundary - (int) currentPosition.x + 1));
+                // Go in the positive X direction
+                if(currentPosition.x == maximumBoundaryX) {
+                    // if already at the boudary --> change direction 180°
+                    nextDirection = 1;
+                    CreatePipes();
+                } else {
+                    GoPositiveX(Random.Range(1, maximumBoundaryX - (int) currentPosition.x + 1));
+                }
                 break;
             case 1:
-                GoNegativeX(Random.Range(1, minimalBoundary - (int) currentPosition.x + 1));
+                // Go in the negative X direction
+                if(currentPosition.x == minimalBoundaryX) {
+                    // if already at the boudary --> change direction 180°
+                    nextDirection = 0;
+                    CreatePipes();
+                } else {
+                    GoNegativeX(Random.Range(minimalBoundaryX - (int) currentPosition.x, 0));
+                }
                 break;
             case 2:
-                GoPositiveY(Random.Range(1, maximumBoundary - (int) currentPosition.y + 1));
+                // Go in the positive Y direction
+                if(currentPosition.y == maximumBoundaryY) {
+                    // if already at the boudary --> change direction 180°
+                    nextDirection = 3;
+                    CreatePipes();
+                } else {
+                    GoPositiveY(Random.Range(1, maximumBoundaryY - (int) currentPosition.y + 1));
+                }
                 break;
             case 3:
-                GoNegativeY(Random.Range(1, minimalBoundary - (int) currentPosition.y + 1));
+                // Go in the negative Y direction
+                if(currentPosition.y == minimalBoundaryY) {
+                    // if already at the boudary --> change direction 180°
+                    nextDirection = 2;
+                    CreatePipes();
+                } else {
+                    GoNegativeY(Random.Range(minimalBoundaryY - (int) currentPosition.y, 0));
+                }
                 break;
             case 4:
-                GoPositiveZ(Random.Range(1, maximumBoundary - (int) currentPosition.z + 1));
+                // Go in the positive Z direction
+                if(currentPosition.z == maximumBoundaryZ) {
+                    // if already at the boudary --> change direction 180°
+                    nextDirection = 5;
+                    CreatePipes();
+                } else {
+                    GoPositiveZ(Random.Range(1, maximumBoundaryZ - (int) currentPosition.z + 1));
+                }
                 break;
             case 5:
-                GoNegativeZ(Random.Range(1, minimalBoundary - (int) currentPosition.z + 1));
+                // Go in the negative Z direction
+                if(currentPosition.z == minimalBoundaryZ) {
+                    // if already at the boudary --> change direction 180°
+                    nextDirection = 4;
+                    CreatePipes();
+                } else {
+                    GoNegativeZ(Random.Range(minimalBoundaryZ - (int) currentPosition.z, 0));
+                }
                 break;
         }
     }
@@ -69,10 +115,10 @@ public class Script_Pipes : MonoBehaviour
     {
         // nextDirection = 1
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x - (length / 2.0f), currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 90)), this.transform);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x + (length / 2.0f), currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 90)), this.transform);
         pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
-        Instantiate(sphere, new Vector3(currentPosition.x - length, currentPosition.y, currentPosition.z), Quaternion.identity, this.transform);
-        currentPosition += new Vector3(-length, 0, 0);
+        Instantiate(sphere, new Vector3(currentPosition.x + length, currentPosition.y, currentPosition.z), Quaternion.identity, this.transform);
+        currentPosition += new Vector3(length, 0, 0);
         nextDirection = Random.Range(2,6);
     }
 
@@ -96,10 +142,10 @@ public class Script_Pipes : MonoBehaviour
     {
         // nextDirection = 3
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y - (length / 2.0f), currentPosition.z), Quaternion.identity, this.transform);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y + (length / 2.0f), currentPosition.z), Quaternion.identity, this.transform);
         pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
-        Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y - length, currentPosition.z), Quaternion.identity, this.transform);
-        currentPosition += new Vector3(0, -length, 0);
+        Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y + length, currentPosition.z), Quaternion.identity, this.transform);
+        currentPosition += new Vector3(0, length, 0);
         int randomNumber = Random.Range(0,2);
         if (randomNumber == 0) {
             nextDirection = Random.Range(0,2);
@@ -123,10 +169,10 @@ public class Script_Pipes : MonoBehaviour
     {
         // nextDirection = 5
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z - (length / 2.0f)), Quaternion.Euler(new Vector3(90, 0, 0)), this.transform);
-        pipe.transform.localScale = new Vector3(1, (length / 2.0f) + 1, 1);
-        Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z - length), Quaternion.identity, this.transform);
-        currentPosition += new Vector3(0, 0, -length);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + (length / 2.0f)), Quaternion.Euler(new Vector3(90, 0, 0)), this.transform);
+        pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
+        Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + length), Quaternion.identity, this.transform);
+        currentPosition += new Vector3(0, 0, length);
         nextDirection = Random.Range(0,4);
     }
 

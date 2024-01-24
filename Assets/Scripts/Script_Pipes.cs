@@ -8,8 +8,8 @@ public class Script_Pipes : MonoBehaviour
     public GameObject sphere;
     public GameObject cylinder;
 
-    public int minimalTransform = -20;
-    public int maximumTransform = 20;
+    public int minimalBoundary = -20;
+    public int maximumBoundary = 20;
 
     public float secondsToSpawnNewPipe = 1.0f;
     public float secondsToRenewTheScene = 30.0f;
@@ -34,57 +34,54 @@ public class Script_Pipes : MonoBehaviour
         switch (nextDirection)
         {
             case 0:
-                GoPositiveX();
+                GoPositiveX(Random.Range(1, maximumBoundary - (int) currentPosition.x + 1));
                 break;
             case 1:
-                GoNegativeX();
+                GoNegativeX(Random.Range(1, minimalBoundary - (int) currentPosition.x + 1));
                 break;
             case 2:
-                GoPositiveY();
+                GoPositiveY(Random.Range(1, maximumBoundary - (int) currentPosition.y + 1));
                 break;
             case 3:
-                GoNegativeY();
+                GoNegativeY(Random.Range(1, minimalBoundary - (int) currentPosition.y + 1));
                 break;
             case 4:
-                GoPositiveZ();
+                GoPositiveZ(Random.Range(1, maximumBoundary - (int) currentPosition.z + 1));
                 break;
             case 5:
-                GoNegativeZ();
+                GoNegativeZ(Random.Range(1, minimalBoundary - (int) currentPosition.z + 1));
                 break;
         }
     }
 
-    void GoPositiveX ()
+    void GoPositiveX (int length)
     {
         // nextDirection = 0
-        int length = Random.Range(1, 21);
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x + (length / 2), currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 270)), this.transform) as GameObject;
-        pipe.transform.localScale = new Vector3(1, (length / 2), 1);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x + (length / 2.0f), currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 270)), this.transform) as GameObject;
+        pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         Instantiate(sphere, new Vector3(currentPosition.x + length, currentPosition.y, currentPosition.z), Quaternion.identity, this.transform);
         currentPosition += new Vector3(length, 0, 0);
         nextDirection = Random.Range(2,6);
     }
 
-    void GoNegativeX ()
+    void GoNegativeX (int length)
     {
         // nextDirection = 1
-        int length = Random.Range(1, 21);
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x - (length / 2), currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 90)), this.transform);
-        pipe.transform.localScale = new Vector3(1, (length / 2), 1);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x - (length / 2.0f), currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 90)), this.transform);
+        pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         Instantiate(sphere, new Vector3(currentPosition.x - length, currentPosition.y, currentPosition.z), Quaternion.identity, this.transform);
         currentPosition += new Vector3(-length, 0, 0);
         nextDirection = Random.Range(2,6);
     }
 
-    void GoPositiveY ()
+    void GoPositiveY (int length)
     {
         // nextDirection = 2
-        int length = Random.Range(1, 21);
         
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y + (length / 2), currentPosition.z), Quaternion.identity, this.transform);
-        pipe.transform.localScale = new Vector3(1, (length / 2), 1);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y + (length / 2.0f), currentPosition.z), Quaternion.identity, this.transform);
+        pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y + length, currentPosition.z), Quaternion.identity, this.transform);
         currentPosition += new Vector3(0, length, 0);
         int randomNumber = Random.Range(0,2);
@@ -95,13 +92,12 @@ public class Script_Pipes : MonoBehaviour
         }
     }
 
-    void GoNegativeY ()
+    void GoNegativeY (int length)
     {
         // nextDirection = 3
-        int length = Random.Range(1, 21);
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y - (length / 2), currentPosition.z), Quaternion.identity, this.transform);
-        pipe.transform.localScale = new Vector3(1, (length / 2), 1);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y - (length / 2.0f), currentPosition.z), Quaternion.identity, this.transform);
+        pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y - length, currentPosition.z), Quaternion.identity, this.transform);
         currentPosition += new Vector3(0, -length, 0);
         int randomNumber = Random.Range(0,2);
@@ -112,25 +108,23 @@ public class Script_Pipes : MonoBehaviour
         }
     }
 
-    void GoPositiveZ ()
+    void GoPositiveZ (int length)
     {
         // nextDirection = 4
-        int length = Random.Range(1, 21);
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + (length / 2)), Quaternion.Euler(new Vector3(270, 0, 0)), this.transform);
-        pipe.transform.localScale = new Vector3(1, (length / 2), 1);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + (length / 2.0f)), Quaternion.Euler(new Vector3(270, 0, 0)), this.transform);
+        pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + length), Quaternion.identity, this.transform);
         currentPosition += new Vector3(0, 0, length);
         nextDirection = Random.Range(0,4);
     }
 
-    void GoNegativeZ ()
+    void GoNegativeZ (int length)
     {
         // nextDirection = 5
-        int length = Random.Range(1, 21);
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z - (length / 2)), Quaternion.Euler(new Vector3(90, 0, 0)), this.transform);
-        pipe.transform.localScale = new Vector3(1, (length / 2), 1);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z - (length / 2.0f)), Quaternion.Euler(new Vector3(90, 0, 0)), this.transform);
+        pipe.transform.localScale = new Vector3(1, (length / 2.0f) + 1, 1);
         Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z - length), Quaternion.identity, this.transform);
         currentPosition += new Vector3(0, 0, -length);
         nextDirection = Random.Range(0,4);

@@ -15,7 +15,7 @@ public class Script_Pipes : MonoBehaviour
     public int minimalBoundaryZ = 0;
     public int maximumBoundaryZ = 20;
 
-    public float secondsToSpawnNewPipe = 1.0f;
+    public float secondsToSpawnNewPipe = 0.25f;
     public float secondsToRenewTheScene = 30.0f;
 
     // Private variables:
@@ -39,62 +39,62 @@ public class Script_Pipes : MonoBehaviour
         {
             case 0:
                 // Go in the positive X direction
-                if(currentPosition.x == maximumBoundaryX) {
+                if(currentPosition.x >= maximumBoundaryX - 2) {
                     // if already at the boudary --> change direction 180°
                     nextDirection = 1;
                     CreatePipes();
                 } else {
-                    GoPositiveX(Random.Range(1, maximumBoundaryX - (int) currentPosition.x + 1));
+                    GoPositiveX(Random.Range(3, maximumBoundaryX - (int) currentPosition.x + 1));
                 }
                 break;
             case 1:
                 // Go in the negative X direction
-                if(currentPosition.x == minimalBoundaryX) {
+                if(currentPosition.x <= minimalBoundaryX + 2) {
                     // if already at the boudary --> change direction 180°
                     nextDirection = 0;
                     CreatePipes();
                 } else {
-                    GoNegativeX(Random.Range(minimalBoundaryX - (int) currentPosition.x, 0));
+                    GoNegativeX(Random.Range(minimalBoundaryX - (int) currentPosition.x, -2));
                 }
                 break;
             case 2:
                 // Go in the positive Y direction
-                if(currentPosition.y == maximumBoundaryY) {
+                if(currentPosition.y >= maximumBoundaryY - 2) {
                     // if already at the boudary --> change direction 180°
                     nextDirection = 3;
                     CreatePipes();
                 } else {
-                    GoPositiveY(Random.Range(1, maximumBoundaryY - (int) currentPosition.y + 1));
+                    GoPositiveY(Random.Range(3, maximumBoundaryY - (int) currentPosition.y + 1));
                 }
                 break;
             case 3:
                 // Go in the negative Y direction
-                if(currentPosition.y == minimalBoundaryY) {
+                if(currentPosition.y <= minimalBoundaryY + 2) {
                     // if already at the boudary --> change direction 180°
                     nextDirection = 2;
                     CreatePipes();
                 } else {
-                    GoNegativeY(Random.Range(minimalBoundaryY - (int) currentPosition.y, 0));
+                    GoNegativeY(Random.Range(minimalBoundaryY - (int) currentPosition.y, -2));
                 }
                 break;
             case 4:
                 // Go in the positive Z direction
-                if(currentPosition.z == maximumBoundaryZ) {
+                if(currentPosition.z >= maximumBoundaryZ - 2) {
                     // if already at the boudary --> change direction 180°
                     nextDirection = 5;
                     CreatePipes();
                 } else {
-                    GoPositiveZ(Random.Range(1, maximumBoundaryZ - (int) currentPosition.z + 1));
+                    GoPositiveZ(Random.Range(3, maximumBoundaryZ - (int) currentPosition.z + 1));
                 }
                 break;
             case 5:
                 // Go in the negative Z direction
-                if(currentPosition.z == minimalBoundaryZ) {
+                if(currentPosition.z <= minimalBoundaryZ + 2) {
                     // if already at the boudary --> change direction 180°
                     nextDirection = 4;
                     CreatePipes();
                 } else {
-                    GoNegativeZ(Random.Range(minimalBoundaryZ - (int) currentPosition.z, 0));
+                    GoNegativeZ(Random.Range(minimalBoundaryZ - (int) currentPosition.z, -2));
                 }
                 break;
         }

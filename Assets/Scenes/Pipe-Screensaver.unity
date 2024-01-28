@@ -645,7 +645,7 @@ MonoBehaviour:
   maximumBoundaryY: 10
   minimalBoundaryZ: -20
   maximumBoundaryZ: 20
-  secondsToSpawnNewPipe: 0.25
+  secondsToSpawnNewPipe: 1
   secondsToRenewTheScene: 30
 --- !u!1 &1530291105
 GameObject:

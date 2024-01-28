@@ -44,7 +44,7 @@ public class Script_Pipes : MonoBehaviour
                     nextDirection = 1;
                     CreatePipes();
                 } else {
-                    GoPositiveX(RaycastForCollision(new Ray(currentPosition, new Vector3(1,0,0)), Random.Range(3, maximumBoundaryX - (int) currentPosition.x + 1)));
+                    GoPositiveX(RaycastForCollision(new Vector3(1,0,0), Random.Range(3, maximumBoundaryX - (int) currentPosition.x + 1)));
                 }
                 break;
             case 1:
@@ -54,7 +54,7 @@ public class Script_Pipes : MonoBehaviour
                     nextDirection = 0;
                     CreatePipes();
                 } else {
-                    GoNegativeX(RaycastForCollision(new Ray(currentPosition, new Vector3(-1,0,0)), Random.Range(minimalBoundaryX - (int) currentPosition.x, -2)));
+                    GoNegativeX(RaycastForCollision(new Vector3(1,0,0), Random.Range(minimalBoundaryX - (int) currentPosition.x, -2)));
                 }
                 break;
             case 2:
@@ -64,7 +64,7 @@ public class Script_Pipes : MonoBehaviour
                     nextDirection = 3;
                     CreatePipes();
                 } else {
-                    GoPositiveY(RaycastForCollision(new Ray(currentPosition, new Vector3(0,1,0)), Random.Range(3, maximumBoundaryY - (int) currentPosition.y + 1)));
+                    GoPositiveY(RaycastForCollision(new Vector3(0,1,0), Random.Range(3, maximumBoundaryY - (int) currentPosition.y + 1)));
                 }
                 break;
             case 3:
@@ -74,7 +74,7 @@ public class Script_Pipes : MonoBehaviour
                     nextDirection = 2;
                     CreatePipes();
                 } else {
-                    GoNegativeY(RaycastForCollision(new Ray(currentPosition, new Vector3(0,-1,0)), Random.Range(minimalBoundaryY - (int) currentPosition.y, -2)));
+                    GoNegativeY(RaycastForCollision(new Vector3(0,1,0), Random.Range(minimalBoundaryY - (int) currentPosition.y, -2)));
                 }
                 break;
             case 4:
@@ -84,7 +84,7 @@ public class Script_Pipes : MonoBehaviour
                     nextDirection = 5;
                     CreatePipes();
                 } else {
-                    GoPositiveZ(RaycastForCollision(new Ray(currentPosition, new Vector3(0,0,1)), Random.Range(3, maximumBoundaryZ - (int) currentPosition.z + 1)));
+                    GoPositiveZ(RaycastForCollision(new Vector3(0,0,1), Random.Range(3, maximumBoundaryZ - (int) currentPosition.z + 1)));
                 }
                 break;
             case 5:
@@ -94,15 +94,15 @@ public class Script_Pipes : MonoBehaviour
                     nextDirection = 4;
                     CreatePipes();
                 } else {
-                    GoNegativeZ(RaycastForCollision(new Ray(currentPosition, new Vector3(0,0,-1)), Random.Range(minimalBoundaryZ - (int) currentPosition.z, -2)));
+                    GoNegativeZ(RaycastForCollision(new Vector3(0,0,1), Random.Range(minimalBoundaryZ - (int) currentPosition.z, -2)));
                 }
                 break;
         }
     }
 
-    int RaycastForCollision(Ray ray, int length)
+    int RaycastForCollision(Vector3 direction, int length)
     {
-        if (Physics.Raycast(ray, out RaycastHit hit, length)) {
+        if (Physics.Raycast(currentPosition, direction, out RaycastHit hit, length)) {
             return (int) (hit.distance - 1.0f);
         } else {
             return length;

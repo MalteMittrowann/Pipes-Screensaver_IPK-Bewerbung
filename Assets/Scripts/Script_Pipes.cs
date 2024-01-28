@@ -23,14 +23,14 @@ public class Script_Pipes : MonoBehaviour
     private int nextDirection;
     private int previousDirection = -1; // set up as not in range of the "nextDirection"-value
 
-    void Start()
+    IEnumerator Start()
     {
         nextDirection = Random.Range(0,6); // Random Number from 0 (incl.) to 6 (excl.): for the 6 possible directions
         Vector3 startSpawnPosition = new Vector3 (Random.Range(-minimalBoundaryX, maximumBoundaryX), Random.Range(minimalBoundaryY, maximumBoundaryY), Random.Range(minimalBoundaryZ, maximumBoundaryZ)); // Create random startPosition for the first sphere
         currentPosition = startSpawnPosition;
         GameObject startSphere = Instantiate(sphere, startSpawnPosition, Quaternion.identity, this.transform);
         InvokeRepeating("CreatePipes", 0.5f, secondsToSpawnNewPipe);
-        InvokeRepeating("StartNew", 0, secondsToRenewTheScene);
+        yield return StartCoroutine(StartNew(secondsToRenewTheScene));
     }
 
     void CreatePipes ()
@@ -45,6 +45,7 @@ public class Script_Pipes : MonoBehaviour
                     CreatePipes();
                 } else {
                     GoPositiveX(RaycastForCollision(new Vector3(1,0,0), Random.Range(3, maximumBoundaryX - (int) currentPosition.x + 1)));
+                    previousDirection = 0;
                 }
                 break;
             case 1:
@@ -55,6 +56,7 @@ public class Script_Pipes : MonoBehaviour
                     CreatePipes();
                 } else {
                     GoNegativeX(RaycastForCollision(new Vector3(1,0,0), Random.Range(minimalBoundaryX - (int) currentPosition.x, -2)));
+                    previousDirection = 1;
                 }
                 break;
             case 2:
@@ -65,6 +67,7 @@ public class Script_Pipes : MonoBehaviour
                     CreatePipes();
                 } else {
                     GoPositiveY(RaycastForCollision(new Vector3(0,1,0), Random.Range(3, maximumBoundaryY - (int) currentPosition.y + 1)));
+                    previousDirection = 2;
                 }
                 break;
             case 3:
@@ -75,6 +78,7 @@ public class Script_Pipes : MonoBehaviour
                     CreatePipes();
                 } else {
                     GoNegativeY(RaycastForCollision(new Vector3(0,1,0), Random.Range(minimalBoundaryY - (int) currentPosition.y, -2)));
+                    previousDirection = 3;
                 }
                 break;
             case 4:
@@ -85,6 +89,7 @@ public class Script_Pipes : MonoBehaviour
                     CreatePipes();
                 } else {
                     GoPositiveZ(RaycastForCollision(new Vector3(0,0,1), Random.Range(3, maximumBoundaryZ - (int) currentPosition.z + 1)));
+                    previousDirection = 4;
                 }
                 break;
             case 5:
@@ -95,6 +100,7 @@ public class Script_Pipes : MonoBehaviour
                     CreatePipes();
                 } else {
                     GoNegativeZ(RaycastForCollision(new Vector3(0,0,1), Random.Range(minimalBoundaryZ - (int) currentPosition.z, -2)));
+                    previousDirection = 5;
                 }
                 break;
         }
@@ -103,10 +109,38 @@ public class Script_Pipes : MonoBehaviour
     int RaycastForCollision(Vector3 direction, int length)
     {
         if (Physics.Raycast(currentPosition, direction, out RaycastHit hit, length)) {
-            return (int) (hit.distance - 1.0f);
+            if (hit.distance <= 1) {
+                if (Physics.Raycast(currentPosition, direction, out RaycastHit hitOpppositeDirection, -length)) {
+                    if (hitOpppositeDirection.distance <= 1) {
+                        Debug.Log("Collision, also in the opposite direction! - CancelInvoke()");
+                        CancelInvoke();
+                        return 0;
+                    } else {
+                        Debug.Log("Collision, also in the opposite direction, but not to short!");
+                        return (int) (hitOpppositeDirection.distance - 1.0f);
+                    }
+                } else {
+                    Debug.Log("Collision, but not in the opposite direction!");
+                    return -length;
+                }
+            } else {
+                Debug.Log("Collision, but not to short!");
+                return (int) (hit.distance - 1.0f);
+            }
         } else {
             return length;
         }
+    }
+
+    IEnumerator StartNew(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        CancelInvoke();
+        foreach(Transform child in this.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
     }
 
     void GoPositiveX (int length)

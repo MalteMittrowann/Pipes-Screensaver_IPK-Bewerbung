@@ -23,6 +23,14 @@ public class Script_Pipes : MonoBehaviour
     private int nextDirection;
     private Color materialColor;
 
+    /*
+     - Random Direction
+     - Random Start-Position
+     - Random Color
+     - Create the starting sphere and give its Material the color
+     - Call CreatePipes() in regular short intervals to create the pipes
+     - Call StartNew() in regular to start the scene anew
+    */
     IEnumerator Start()
     {
         nextDirection = Random.Range(0,6); // Random Number from 0 (incl.) to 6 (excl.): for the 6 possible directions
@@ -35,6 +43,11 @@ public class Script_Pipes : MonoBehaviour
         yield return StartCoroutine(StartNew(secondsToRenewTheScene));
     }
 
+    /*
+     - Spawn a new pipe in the next direction
+     - Check if already to close to the boundary
+     - Decide on a random number for the size of the pipe and call the RaycastForCollision()-function to check if it would be too long
+    */
     void CreatePipes ()
     {
         switch (nextDirection)
@@ -42,7 +55,7 @@ public class Script_Pipes : MonoBehaviour
             case 0:
                 // Go in the positive X direction
                 if(currentPosition.x >= maximumBoundaryX - 2) {
-                    // if already at the boudary --> change direction 180°
+                    // if already at the boundary --> change direction 180°
                     nextDirection = 1;
                     CreatePipes();
                 } else {
@@ -52,7 +65,7 @@ public class Script_Pipes : MonoBehaviour
             case 1:
                 // Go in the negative X direction
                 if(currentPosition.x <= minimalBoundaryX + 2) {
-                    // if already at the boudary --> change direction 180°
+                    // if already at the boundary --> change direction 180°
                     nextDirection = 0;
                     CreatePipes();
                 } else {
@@ -62,7 +75,7 @@ public class Script_Pipes : MonoBehaviour
             case 2:
                 // Go in the positive Y direction
                 if(currentPosition.y >= maximumBoundaryY - 2) {
-                    // if already at the boudary --> change direction 180°
+                    // if already at the boundary --> change direction 180°
                     nextDirection = 3;
                     CreatePipes();
                 } else {
@@ -72,7 +85,7 @@ public class Script_Pipes : MonoBehaviour
             case 3:
                 // Go in the negative Y direction
                 if(currentPosition.y <= minimalBoundaryY + 2) {
-                    // if already at the boudary --> change direction 180°
+                    // if already at the boundary --> change direction 180°
                     nextDirection = 2;
                     CreatePipes();
                 } else {
@@ -82,7 +95,7 @@ public class Script_Pipes : MonoBehaviour
             case 4:
                 // Go in the positive Z direction
                 if(currentPosition.z >= maximumBoundaryZ - 2) {
-                    // if already at the boudary --> change direction 180°
+                    // if already at the boundary --> change direction 180°
                     nextDirection = 5;
                     CreatePipes();
                 } else {
@@ -92,7 +105,7 @@ public class Script_Pipes : MonoBehaviour
             case 5:
                 // Go in the negative Z direction
                 if(currentPosition.z <= minimalBoundaryZ + 2) {
-                    // if already at the boudary --> change direction 180°
+                    // if already at the boundary --> change direction 180°
                     nextDirection = 4;
                     CreatePipes();
                 } else {
@@ -102,6 +115,11 @@ public class Script_Pipes : MonoBehaviour
         }
     }
 
+    /*
+     - Check for collisions with already existing pipes
+     - Shorten the pipe if it would otherwise collide
+     - If too short in that case --> Spawn a new pipe at a free spot
+    */
     int RaycastForCollision(Vector3 direction, int length)
     {
         if (Physics.Raycast(currentPosition, direction, out RaycastHit hit, length)) {
@@ -126,6 +144,9 @@ public class Script_Pipes : MonoBehaviour
         }
     }
 
+    /*
+     - After a regular long stretch of time start the scene anew, so that the scene is cleared and a new pipe is spawned
+    */
     IEnumerator StartNew(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
@@ -142,6 +163,14 @@ public class Script_Pipes : MonoBehaviour
         yield return StartCoroutine(StartNew(secondsToRenewTheScene));
     }
 
+    /*
+     - Spawn a new pipe in the correct direction
+     - Assign it the length and the color
+     - Spawn a sphere as a corner
+     - Assign the sphere the color
+     - Shift the currentPosition to the new spot
+     - Get a random new direction, which is not backwards and forward
+    */
     void GoPositiveX (int length)
     {
         // nextDirection = 0

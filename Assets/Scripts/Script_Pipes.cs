@@ -37,7 +37,7 @@ public class Script_Pipes : MonoBehaviour
         Vector3 startSpawnPosition = new Vector3 (Random.Range(minimalBoundaryX, maximumBoundaryX), Random.Range(minimalBoundaryY, maximumBoundaryY), Random.Range(minimalBoundaryZ, maximumBoundaryZ)); // Create random startPosition for the first sphere
         currentPosition = startSpawnPosition;
         materialColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
-        GameObject startSphere = Instantiate(sphere, startSpawnPosition, Quaternion.identity, this.transform);
+        GameObject startSphere = Instantiate(sphere, startSpawnPosition, Quaternion.identity, this.transform) as GameObject;
         startSphere.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         InvokeRepeating("CreatePipes", 0.5f, secondsToSpawnNewPipe);
         yield return StartCoroutine(StartNew(secondsToRenewTheScene));
@@ -69,7 +69,7 @@ public class Script_Pipes : MonoBehaviour
                     nextDirection = 0;
                     CreatePipes();
                 } else {
-                    GoNegativeX(RaycastForCollision(new Vector3(1,0,0), Random.Range(minimalBoundaryX - (int) currentPosition.x, -2)));
+                    GoNegativeX(RaycastForCollision(new Vector3(-1,0,0), Random.Range(minimalBoundaryX - (int) currentPosition.x, -2)));
                 }
                 break;
             case 2:
@@ -89,7 +89,7 @@ public class Script_Pipes : MonoBehaviour
                     nextDirection = 2;
                     CreatePipes();
                 } else {
-                    GoNegativeY(RaycastForCollision(new Vector3(0,1,0), Random.Range(minimalBoundaryY - (int) currentPosition.y, -2)));
+                    GoNegativeY(RaycastForCollision(new Vector3(0,-1,0), Random.Range(minimalBoundaryY - (int) currentPosition.y, -2)));
                 }
                 break;
             case 4:
@@ -109,7 +109,7 @@ public class Script_Pipes : MonoBehaviour
                     nextDirection = 4;
                     CreatePipes();
                 } else {
-                    GoNegativeZ(RaycastForCollision(new Vector3(0,0,1), Random.Range(minimalBoundaryZ - (int) currentPosition.z, -2)));
+                    GoNegativeZ(RaycastForCollision(new Vector3(0,0,-1), Random.Range(minimalBoundaryZ - (int) currentPosition.z, -2)));
                 }
                 break;
         }
@@ -122,8 +122,9 @@ public class Script_Pipes : MonoBehaviour
     */
     int RaycastForCollision(Vector3 direction, int length)
     {
-        if (Physics.Raycast(currentPosition, direction, out RaycastHit hit, length)) {
+        if (Physics.Raycast(currentPosition, direction, out RaycastHit hit, Mathf.Abs(length))) {
             if (hit.distance <= 1) {
+                Debug.Log("Start new!");
                 CancelInvoke();
                 bool collisionCheck = true;
                 while (collisionCheck) {
@@ -137,9 +138,11 @@ public class Script_Pipes : MonoBehaviour
                 InvokeRepeating("CreatePipes", 0.2f, secondsToSpawnNewPipe);
                 return 0;
             } else {
+                Debug.Log("Collision!");
                 return (int) (hit.distance - 1.0f);
             }
         } else {
+            Debug.Log("No collision!");
             return length;
         }
     }
@@ -156,7 +159,7 @@ public class Script_Pipes : MonoBehaviour
             Destroy(child.gameObject);
         }
         currentPosition = new Vector3 (Random.Range(minimalBoundaryX, maximumBoundaryX), Random.Range(minimalBoundaryY, maximumBoundaryY), Random.Range(minimalBoundaryZ, maximumBoundaryZ));
-        GameObject startSphere = Instantiate(sphere, currentPosition, Quaternion.identity, this.transform);
+        GameObject startSphere = Instantiate(sphere, currentPosition, Quaternion.identity, this.transform) as GameObject;
         materialColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
         startSphere.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         InvokeRepeating("CreatePipes", 0.2f, secondsToSpawnNewPipe);
@@ -178,7 +181,7 @@ public class Script_Pipes : MonoBehaviour
         GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x + (length / 2.0f), currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 270)), this.transform) as GameObject;
         pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         pipe.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
-        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x + length, currentPosition.y, currentPosition.z), Quaternion.identity, this.transform);
+        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x + length, currentPosition.y, currentPosition.z), Quaternion.identity, this.transform) as GameObject;
         corner.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         currentPosition += new Vector3(length, 0, 0);
         nextDirection = Random.Range(2,6);
@@ -188,10 +191,10 @@ public class Script_Pipes : MonoBehaviour
     {
         // nextDirection = 1
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x + (length / 2.0f), currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 90)), this.transform);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x + (length / 2.0f), currentPosition.y, currentPosition.z), Quaternion.Euler(new Vector3(0, 0, 90)), this.transform) as GameObject;
         pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         pipe.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
-        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x + length, currentPosition.y, currentPosition.z), Quaternion.identity, this.transform);
+        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x + length, currentPosition.y, currentPosition.z), Quaternion.identity, this.transform) as GameObject;
         corner.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         currentPosition += new Vector3(length, 0, 0);
         nextDirection = Random.Range(2,6);
@@ -201,10 +204,10 @@ public class Script_Pipes : MonoBehaviour
     {
         // nextDirection = 2
         
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y + (length / 2.0f), currentPosition.z), Quaternion.identity, this.transform);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y + (length / 2.0f), currentPosition.z), Quaternion.identity, this.transform) as GameObject;
         pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         pipe.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
-        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y + length, currentPosition.z), Quaternion.identity, this.transform);
+        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y + length, currentPosition.z), Quaternion.identity, this.transform) as GameObject;
         corner.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         currentPosition += new Vector3(0, length, 0);
         int randomNumber = Random.Range(0,2);
@@ -219,10 +222,10 @@ public class Script_Pipes : MonoBehaviour
     {
         // nextDirection = 3
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y + (length / 2.0f), currentPosition.z), Quaternion.identity, this.transform);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y + (length / 2.0f), currentPosition.z), Quaternion.identity, this.transform) as GameObject;
         pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         pipe.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
-        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y + length, currentPosition.z), Quaternion.identity, this.transform);
+        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y + length, currentPosition.z), Quaternion.identity, this.transform) as GameObject;
         corner.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         currentPosition += new Vector3(0, length, 0);
         int randomNumber = Random.Range(0,2);
@@ -237,10 +240,10 @@ public class Script_Pipes : MonoBehaviour
     {
         // nextDirection = 4
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + (length / 2.0f)), Quaternion.Euler(new Vector3(270, 0, 0)), this.transform);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + (length / 2.0f)), Quaternion.Euler(new Vector3(270, 0, 0)), this.transform) as GameObject;
         pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         pipe.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
-        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + length), Quaternion.identity, this.transform);
+        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + length), Quaternion.identity, this.transform) as GameObject;
         corner.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         currentPosition += new Vector3(0, 0, length);
         nextDirection = Random.Range(0,4);
@@ -250,10 +253,10 @@ public class Script_Pipes : MonoBehaviour
     {
         // nextDirection = 5
 
-        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + (length / 2.0f)), Quaternion.Euler(new Vector3(90, 0, 0)), this.transform);
+        GameObject pipe = Instantiate(cylinder, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + (length / 2.0f)), Quaternion.Euler(new Vector3(90, 0, 0)), this.transform) as GameObject;
         pipe.transform.localScale = new Vector3(1, (length / 2.0f), 1);
         pipe.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
-        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + length), Quaternion.identity, this.transform);
+        GameObject corner = Instantiate(sphere, new Vector3(currentPosition.x, currentPosition.y, currentPosition.z + length), Quaternion.identity, this.transform) as GameObject;
         corner.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         currentPosition += new Vector3(0, 0, length);
         nextDirection = Random.Range(0,4);

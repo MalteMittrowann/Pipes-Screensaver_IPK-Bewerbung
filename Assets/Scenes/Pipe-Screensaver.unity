@@ -713,6 +713,7 @@ MonoBehaviour:
   maximumBoundaryZ: 20
   secondsToSpawnNewPipe: 0.25
   secondsToRenewTheScene: 25
+  mainCamera: {fileID: 1530291105}
 --- !u!1 &1530291105
 GameObject:
   m_ObjectHideFlags: 0
@@ -747,7 +748,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimalRotation: -10
   maximumRotation: 10
-  secondsToRepeat: 30
 --- !u!81 &1530291107
 AudioListener:
   m_ObjectHideFlags: 0

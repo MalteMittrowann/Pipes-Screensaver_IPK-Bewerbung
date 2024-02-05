@@ -250,6 +250,7 @@ public class Script_Pipes : MonoBehaviour
      - Refresh the scene:
         - Cancel the creation of more pipes and corners
         - Delete all pipes and corners
+        - Change the angle of the camera
         - Create a new starting sphere at a random starting position
         - Start the Circle again from the start
     */

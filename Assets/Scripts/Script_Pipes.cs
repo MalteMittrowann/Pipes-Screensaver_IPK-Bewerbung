@@ -19,6 +19,8 @@ public class Script_Pipes : MonoBehaviour
     public float secondsToSpawnNewPipe = 0.25f;
     public float secondsToRenewTheScene = 20.0f;
 
+    public GameObject mainCamera;
+
     // Private variables:
     private Vector3 currentPosition = new Vector3(0,0,0);
     private int nextDirection;
@@ -43,7 +45,6 @@ public class Script_Pipes : MonoBehaviour
         GameObject startSphere = Instantiate(sphere, startSpawnPosition, Quaternion.identity, this.transform);
         startSphere.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         InvokeRepeating("CreatePipes", 0.5f, secondsToSpawnNewPipe);
-        //yield return StartCoroutine(StartNewScene());
     }
 
     /*
@@ -230,6 +231,13 @@ public class Script_Pipes : MonoBehaviour
             if (!Physics.SphereCast(vector, 2, transform.forward, out RaycastHit hitParameter, 2.0f)) {
                 collisionCheck = false;
                 currentPosition = vector;
+            } else {
+                deadEndCounter += 1;
+                if (deadEndCounter >= 10) {
+                    StartNewScene();
+                    deadEndCounter = 0;
+                    return;
+                }
             }
         }
         materialColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
@@ -239,22 +247,25 @@ public class Script_Pipes : MonoBehaviour
     }
 
     /*
-     - After a regular long stretch of time start the scene anew, so that the scene is cleared and a new pipe is spawned
+     - Refresh the scene:
+        - Cancel the creation of more pipes and corners
+        - Delete all pipes and corners
+        - Create a new starting sphere at a random starting position
+        - Start the Circle again from the start
     */
-    IEnumerator StartNewScene()
+    void StartNewScene()
     {
-        yield return new WaitForSeconds(secondsToRenewTheScene);
         CancelInvoke();
         foreach(Transform child in this.transform)
         {
             Destroy(child.gameObject);
         }
+        mainCamera.GetComponent<Script_Camera>().ChangeRotation();
         currentPosition = new Vector3 (Random.Range(minimalBoundaryX, maximumBoundaryX), Random.Range(minimalBoundaryY, maximumBoundaryY), Random.Range(minimalBoundaryZ, maximumBoundaryZ));
         GameObject startSphere = Instantiate(sphere, currentPosition, Quaternion.identity, this.transform);
         materialColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
         startSphere.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         InvokeRepeating("CreatePipes", 0.2f, secondsToSpawnNewPipe);
-        yield return StartCoroutine(StartNewScene());
     }
 
     /*

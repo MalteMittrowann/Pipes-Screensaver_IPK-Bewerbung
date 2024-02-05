@@ -6,13 +6,11 @@ public class Script_Camera : MonoBehaviour
 {
     public int minimalRotation = -10;
     public int maximumRotation = 10;
-    public int secondsToRepeat = 30;
 
-    void Start () {
-        InvokeRepeating("ChangeRotation", 0, secondsToRepeat);
-    }
-
-    void ChangeRotation () {
+    /*
+    Change the rotation of the camera to have a different angle with the start of a new scene
+    */
+    public void ChangeRotation () {
         transform.rotation = Quaternion.Euler(Random.Range(minimalRotation,maximumRotation), Random.Range(minimalRotation,maximumRotation), 0);
     }
 }

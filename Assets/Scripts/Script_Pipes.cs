@@ -34,7 +34,7 @@ public class Script_Pipes : MonoBehaviour
      - Call CreatePipes() in regular short intervals to create the pipes
      - Call StartNew() in regular to start the scene anew
     */
-    IEnumerator Start()
+    void Start()
     {
         nextDirection = Random.Range(0,6); // Random Number from 0 (incl.) to 6 (excl.): for the 6 possible directions
         Vector3 startSpawnPosition = new Vector3 (Random.Range(minimalBoundaryX, maximumBoundaryX), Random.Range(minimalBoundaryY, maximumBoundaryY), Random.Range(minimalBoundaryZ, maximumBoundaryZ)); // Create random startPosition for the first sphere
@@ -43,7 +43,7 @@ public class Script_Pipes : MonoBehaviour
         GameObject startSphere = Instantiate(sphere, startSpawnPosition, Quaternion.identity, this.transform);
         startSphere.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         InvokeRepeating("CreatePipes", 0.5f, secondsToSpawnNewPipe);
-        yield return StartCoroutine(StartNewScene(secondsToRenewTheScene));
+        //yield return StartCoroutine(StartNewScene());
     }
 
     /*
@@ -127,7 +127,8 @@ public class Script_Pipes : MonoBehaviour
     /*
      - Check for collisions with already existing pipes
      - Shorten the pipe if it would otherwise collide
-     - If too short in that case --> Spawn a new pipe at a free spot
+     - If too short in that case --> Check the other four directions with the original length
+     - If still colliding --> Spawn a new pipe at a random position with the StartNewPipe()-function
     */
     int RaycastForCollision(Vector3 directionVector, int length)
     {
@@ -135,81 +136,79 @@ public class Script_Pipes : MonoBehaviour
             // The ray has detected a collision
             if (hit.distance <= 2) {
                 // The collision has to be averted by changing the direction of the pipe
-                deadEndCounter += 1;
-                switch(previousDirection)
-                {
-                    // X-Direction:
-                    case 0:
-                    case 1:
+                    switch(previousDirection)
+                    {
+                        // X-Direction:
+                        case 0:
+                        case 1:
 
-                    if (!Physics.Raycast(currentPosition, new Vector3 (0, 1, 0), Mathf.Abs(length))){
-                        nextDirection = 3;
-                        CreatePipes();
-                    } else if (!Physics.Raycast(currentPosition, new Vector3 (0, -1, 0), Mathf.Abs(length))){
-                        nextDirection = 4;
-                        CreatePipes();
-                    } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 0, 1), Mathf.Abs(length))){
-                        nextDirection = 5;
-                        CreatePipes();
-                    } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 0, -1), Mathf.Abs(length))){
-                        nextDirection = 6;
-                        CreatePipes();
-                    } else {
-                        StartNewPipe();
+                        if (!Physics.Raycast(currentPosition, new Vector3 (0, 1, 0), Mathf.Abs(length))){
+                            nextDirection = 2;
+                            GoPositiveY(length);
+                        } else if (!Physics.Raycast(currentPosition, new Vector3 (0, -1, 0), Mathf.Abs(length))){
+                            nextDirection = 3;
+                            GoNegativeY(length);
+                        } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 0, 1), Mathf.Abs(length))){
+                            nextDirection = 4;
+                            GoPositiveZ(length);
+                        } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 0, -1), Mathf.Abs(length))){
+                            nextDirection = 5;
+                            GoNegativeZ(length);
+                        } else {
+                            StartNewPipe();
+                        }
+                        break;
+
+                        // Y-Direction:
+                        case 2:
+                        case 3:
+
+                        if (!Physics.Raycast(currentPosition, new Vector3 (1, 0, 0), Mathf.Abs(length))){
+                            nextDirection = 0;
+                            GoPositiveX(length);
+                        } else if (!Physics.Raycast(currentPosition, new Vector3 (-1, 0, 0), Mathf.Abs(length))){
+                            nextDirection = 1;
+                            GoNegativeX(length);
+                        } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 0, 1), Mathf.Abs(length))){
+                            nextDirection = 4;
+                            GoPositiveZ(length);
+                        } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 0, -1), Mathf.Abs(length))){
+                            nextDirection = 5;
+                            GoNegativeZ(length);
+                        } else {
+                            StartNewPipe();
+                        }
+                        break;
+
+                        // Z-Direction:
+                        case 4:
+                        case 5:
+
+                        if (!Physics.Raycast(currentPosition, new Vector3 (1, 0, 0), Mathf.Abs(length))){
+                            nextDirection = 0;
+                            GoPositiveX(length);
+                        } else if (!Physics.Raycast(currentPosition, new Vector3 (-1, 0, 0), Mathf.Abs(length))){
+                            nextDirection = 1;
+                            GoNegativeX(length);
+                        } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 1, 0), Mathf.Abs(length))){
+                            nextDirection = 2;
+                            GoPositiveY(length);
+                        } else if (!Physics.Raycast(currentPosition, new Vector3 (0, -1, 0), Mathf.Abs(length))){
+                            nextDirection = 3;
+                            GoNegativeY(length);
+                        } else {
+                            StartNewPipe();
+                        }
+                        break;
                     }
-                    break;
-
-                    // Y-Direction:
-                    case 2:
-                    case 3:
-
-                    if (!Physics.Raycast(currentPosition, new Vector3 (1, 0, 0), Mathf.Abs(length))){
-                        nextDirection = 0;
-                        CreatePipes();
-                    } else if (!Physics.Raycast(currentPosition, new Vector3 (-1, 0, 0), Mathf.Abs(length))){
-                        nextDirection = 1;
-                        CreatePipes();
-                    } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 0, 1), Mathf.Abs(length))){
-                        nextDirection = 5;
-                        CreatePipes();
-                    } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 0, -1), Mathf.Abs(length))){
-                        nextDirection = 6;
-                        CreatePipes();
-                    } else {
-                        StartNewPipe();
-                    }
-                    break;
-
-                    // Z-Direction:
-                    case 4:
-                    case 5:
-
-                    if (!Physics.Raycast(currentPosition, new Vector3 (1, 0, 0), Mathf.Abs(length))){
-                        nextDirection = 0;
-                        CreatePipes();
-                    } else if (!Physics.Raycast(currentPosition, new Vector3 (-1, 0, 0), Mathf.Abs(length))){
-                        nextDirection = 1;
-                        CreatePipes();
-                    } else if (!Physics.Raycast(currentPosition, new Vector3 (0, 1, 0), Mathf.Abs(length))){
-                        nextDirection = 2;
-                        CreatePipes();
-                    } else if (!Physics.Raycast(currentPosition, new Vector3 (0, -1, 0), Mathf.Abs(length))){
-                        nextDirection = 3;
-                        CreatePipes();
-                    } else {
-                        StartNewPipe();
-                    }
-                    break;
-                }
-                return 0;
+                    return 0;
             } else {
                 // The collision can be averted by shortening the pipe
                 if (nextDirection == 1 || nextDirection == 3 || nextDirection == 5) {
                     return (int) (-hit.distance + 1.0f);
                 } else {
                     return (int) (hit.distance - 1.0f);
-                }
-                
+                } 
             }
         } else {
             // The ray has detected no collision
@@ -242,9 +241,9 @@ public class Script_Pipes : MonoBehaviour
     /*
      - After a regular long stretch of time start the scene anew, so that the scene is cleared and a new pipe is spawned
     */
-    IEnumerator StartNewScene(float waitTime)
+    IEnumerator StartNewScene()
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitForSeconds(secondsToRenewTheScene);
         CancelInvoke();
         foreach(Transform child in this.transform)
         {
@@ -255,7 +254,7 @@ public class Script_Pipes : MonoBehaviour
         materialColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
         startSphere.GetComponent<Renderer>().material.SetColor("_Color", materialColor);
         InvokeRepeating("CreatePipes", 0.2f, secondsToSpawnNewPipe);
-        yield return StartCoroutine(StartNewScene(secondsToRenewTheScene));
+        yield return StartCoroutine(StartNewScene());
     }
 
     /*
